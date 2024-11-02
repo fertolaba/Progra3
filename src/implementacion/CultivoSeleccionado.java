@@ -1,27 +1,76 @@
 package implementacion;
 
-public class CultivoSeleccionado {
+import Lib.Coordenada;
 
+public class CultivoSeleccionado {
     private String nombreCultivo;
+    private Coordenada esquinaSuperiorIzquierda;
+    private Coordenada esquinaInferiorDerecha;
     private double montoInvertido;
-    private double riesgoPromedio;
+    private int riesgoAsociado;
     private double gananciaObtenida;
 
-    //falta agregar las coordenadas de la esquina superior izq y la inf derecha del area
+    public CultivoSeleccionado() {
+    }
+
+    public CultivoSeleccionado(String nombreCultivo, Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double montoInvertido, int riesgoAsociado, double gananciaObtenida) {
+        this.nombreCultivo = nombreCultivo;
+        this.esquinaSuperiorIzquierda = esquinaSuperiorIzquierda;
+        this.esquinaInferiorDerecha = esquinaInferiorDerecha;
+        this.montoInvertido = montoInvertido;
+        this.riesgoAsociado = riesgoAsociado;
+        this.gananciaObtenida = gananciaObtenida;
+    }
 
     public String getNombreCultivo() {
-        return nombreCultivo;
+        return this.nombreCultivo;
+    }
+
+    public void setNombreCultivo(String nombreCultivo) {
+        this.nombreCultivo = nombreCultivo;
+    }
+
+    public Coordenada getEsquinaSuperiorIzquierda() {
+        return this.esquinaSuperiorIzquierda;
+    }
+
+    public void setEsquinaSuperiorIzquierda(Coordenada esquinaSuperiorIzquierda) {
+        this.esquinaSuperiorIzquierda = esquinaSuperiorIzquierda;
+    }
+
+    public Coordenada getEsquinaInferiorDerecha() {
+        return this.esquinaInferiorDerecha;
+    }
+
+    public void setEsquinaInferiorDerecha(Coordenada esquinaInferiorDerecha) {
+        this.esquinaInferiorDerecha = esquinaInferiorDerecha;
     }
 
     public double getMontoInvertido() {
-        return montoInvertido;
+        return this.montoInvertido;
     }
 
-    public double getRiesgoPromedio() {
-        return riesgoPromedio;
+    public void setMontoInvertido(double montoInvertido) {
+        this.montoInvertido = montoInvertido;
+    }
+
+    public int getRiesgoAsociado() {
+        return this.riesgoAsociado;
+    }
+
+    public void setRiesgoAsociado(int riesgoAsociado) {
+        this.riesgoAsociado = riesgoAsociado;
     }
 
     public double getGananciaObtenida() {
-        return gananciaObtenida;
+        return this.gananciaObtenida;
+    }
+
+    public void setGananciaObtenida(double gananciaObtenida) {
+        this.gananciaObtenida = gananciaObtenida;
+    }
+
+    public String toString() {
+        return "CultivoSeleccionado{nombreCultivo='" + this.nombreCultivo + '\'' + ", esquinaSuperiorIzquierda=" + this.esquinaSuperiorIzquierda + ", esquinaInferiorDerecha=" + this.esquinaInferiorDerecha + ", montoInvertido=" + this.montoInvertido + ", riesgoAsociado=" + this.riesgoAsociado + ", gananciaObtenida=" + this.gananciaObtenida + '}';
     }
 }
