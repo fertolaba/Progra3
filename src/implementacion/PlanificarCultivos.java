@@ -43,12 +43,21 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
 
                     distribucionActual.add(cultivoSeleccionado);
 
+                    Repetircultivo(campo, cultivoSeleccionado);
+
+                    rellenar(campo, cultivoSeleccionado, distribucionActual.get(distribucionActual.size() - 1));
+
 
                     int sig_x = x;
                     int sig_y = y + (cultivoSeleccionado.getEsquinaInferiorDerecha().getY() - cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY() + 1); // Altura del cultivo
-                    if (sig_y >= campo[0].length) {
-                        sig_x += 1; // Si llegamos al final de la fila, avanzamos a la siguiente fila
-                        sig_y = 0; // Reiniciamos a la primera columna
+                    while (sig_x < campo.length && campo[sig_x][sig_y] != 0) {
+                        sig_y = sig_y + 1; // Avanzamos una columna
+
+                        // Si llegamos al final de la columna, avanzamos a la siguiente fila
+                        if (sig_y >= campo[0].length) {
+                            sig_x = sig_x + 1; // Avanzamos a la siguiente fila
+                            sig_y = 0; // Reiniciamos a la primera columna
+                        }
                     }
 
                     mejorDistribucion = backtracking(campo, cultivos, temporadaActual, sig_x, sig_y, distribucionActual, mejorDistribucion, matrizRiesgo);
@@ -110,16 +119,16 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         return true;
     }
 
-    public void Repetircultivo(String[][] campo, CultivoSeleccionado cultivoSeleccionado) {
+    public void Repetircultivo(double[][] campo, CultivoSeleccionado cultivoSeleccionado) {
         // Recorre cada celda del campo
         for (int i = 0; i < campo.length; i++) {
             for (int j = 0; j < campo[0].length; j++) {
-                // Verifica si la celda está vacía
-                if (campo[i][j] == null || campo[i][j].isEmpty()) {
+                // Verifica si la celda está vacía (supongo que 0 representa una celda vacía)
+                if (campo[i][j] == 0) {
                     // Verifica si no hay colisión al colocar el cultivo seleccionado
                     if (colisionan(campo, cultivoSeleccionado, i, j)) {
-                        // Coloca el nombre del cultivo en la celda
-                        campo[i][j] = cultivoSeleccionado.getNombreCultivo();
+                        // Coloca el valor del cultivo en la celda
+                        campo[i][j] = cultivoSeleccionado.getRiesgoAsociado(); // o alguna otra propiedad del cultivo
                     }
                 }
             }
@@ -127,14 +136,17 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
     }
 
 
-    private void rellenar(CultivoSeleccionado[][] campo, CultivoSeleccionado cultivoSeleccionado, CultivoSeleccionado ultimoCultivo) {
+    private void rellenar(double[][] campo, CultivoSeleccionado cultivoSeleccionado, CultivoSeleccionado ultimoCultivo) {
         for (int i = 0; i < campo.length; i++) {
             for (int j = 0; j < campo[0].length; j++) {
-                if (campo[i][j] ==null) { // en vez de null 0.0
-                    if (ultimoCultivo != null && ultimoCultivo.equals(cultivoSeleccionado)) { // Si el ultimo cultivo es igual al cultivo que se está tratando de rellenar
-                        continue; // Pasar al siguiente cultivo si es el mismo
+                // Si la celda está vacía (0) o es un valor no válido
+                if (campo[i][j] == 0) {
+                    // Si el último cultivo colocado es igual al actual, evitamos colocarlo nuevamente
+                    if (ultimoCultivo != null && ultimoCultivo.getRiesgoAsociado() == cultivoSeleccionado.getRiesgoAsociado()) {
+                        continue; // Pasar a la siguiente celda
                     }
-                    campo[i][j] = cultivoSeleccionado; // Rellenar la parcela con el cultivo
+                    // Colocamos el cultivo en la celda vacía
+                    campo[i][j] = cultivoSeleccionado.getRiesgoAsociado(); // Aquí asignamos un valor del cultivo (ej. riesgo)
                 }
             }
         }
@@ -188,30 +200,32 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         double riesgoPromedio = riesgoTotal / (filas * columnas);
         return riesgoPromedio;
     }
-    private boolean colisionan(String[][] campo, CultivoSeleccionado cultivoSeleccionado, int i, int j) {
-        // Verifica si hay un cultivo del mismo tipo en la celda de arriba
-        if (i > 0 && campo[i - 1][j] != null && campo[i - 1][j].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return false;
+
+    private boolean colisionan(double[][] campo, CultivoSeleccionado cultivoSeleccionado, int i, int j) {
+        // Verifica si hay un cultivo en la celda de arriba
+        if (i > 0 && campo[i - 1][j] != 0 && campo[i - 1][j] == cultivoSeleccionado.getRiesgoAsociado()) {
+            return false; // Colisión con cultivo en la celda de arriba
         }
 
-        // Verifica si hay un cultivo del mismo tipo en la celda de abajo
-        if (i < campo.length - 1 && campo[i + 1][j] != null && campo[i + 1][j].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return false;
+        // Verifica si hay un cultivo en la celda de abajo
+        if (i < campo.length - 1 && campo[i + 1][j] != 0 && campo[i + 1][j] == cultivoSeleccionado.getRiesgoAsociado()) {
+            return false; // Colisión con cultivo en la celda de abajo
         }
 
-        // Verifica si hay un cultivo del mismo tipo en la celda de la izquierda
-        if (j > 0 && campo[i][j - 1] != null && campo[i][j - 1].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return false;
+        // Verifica si hay un cultivo en la celda de la izquierda
+        if (j > 0 && campo[i][j - 1] != 0 && campo[i][j - 1] == cultivoSeleccionado.getRiesgoAsociado()) {
+            return false; // Colisión con cultivo en la celda de la izquierda
         }
 
-        // Verifica si hay un cultivo del mismo tipo en la celda de la derecha
-        if (j < campo[0].length - 1 && campo[i][j + 1] != null && campo[i][j + 1].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return false;
+        // Verifica si hay un cultivo en la celda de la derecha
+        if (j < campo[0].length - 1 && campo[i][j + 1] != 0 && campo[i][j + 1] == cultivoSeleccionado.getRiesgoAsociado()) {
+            return false; // Colisión con cultivo en la celda de la derecha
         }
 
         // Si no hay colisiones, devuelve verdadero
         return true;
     }
+
 
 
 
