@@ -43,9 +43,8 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
 
                     distribucionActual.add(cultivoSeleccionado);
 
-                    Repetircultivo(campo, cultivoSeleccionado);
+                    repetirCultivo(campo, cultivoSeleccionado, distribucionActual.get(distribucionActual.size() - 1));
 
-                    rellenar(campo, cultivoSeleccionado, distribucionActual.get(distribucionActual.size() - 1));
 
 
                     int sig_x = x;
@@ -119,38 +118,26 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         return true;
     }
 
-    public void Repetircultivo(double[][] campo, CultivoSeleccionado cultivoSeleccionado) {
+    public void repetirCultivo(double[][] campo, CultivoSeleccionado cultivoSeleccionado, CultivoSeleccionado ultimoCultivo) {
         // Recorre cada celda del campo
         for (int i = 0; i < campo.length; i++) {
             for (int j = 0; j < campo[0].length; j++) {
-                // Verifica si la celda está vacía (supongo que 0 representa una celda vacía)
+                // Verifica si la celda está vacía (0 representa una celda vacía)
                 if (campo[i][j] == 0) {
                     // Verifica si no hay colisión al colocar el cultivo seleccionado
                     if (colisionan(campo, cultivoSeleccionado, i, j)) {
-                        // Coloca el valor del cultivo en la celda
-                        campo[i][j] = cultivoSeleccionado.getRiesgoAsociado(); // o alguna otra propiedad del cultivo
+                        // Verifica si el último cultivo colocado es igual al actual, evitamos colocarlo nuevamente
+                        if (ultimoCultivo != null && ultimoCultivo.getRiesgoAsociado() == cultivoSeleccionado.getRiesgoAsociado()) {
+                            continue; // Evita colocar el mismo cultivo consecutivamente
+                        }
+                        // Coloca el valor del cultivo en la celda (usando el valor de riesgo asociado)
+                        campo[i][j] = cultivoSeleccionado.getRiesgoAsociado();
                     }
                 }
             }
         }
     }
 
-
-    private void rellenar(double[][] campo, CultivoSeleccionado cultivoSeleccionado, CultivoSeleccionado ultimoCultivo) {
-        for (int i = 0; i < campo.length; i++) {
-            for (int j = 0; j < campo[0].length; j++) {
-                // Si la celda está vacía (0) o es un valor no válido
-                if (campo[i][j] == 0) {
-                    // Si el último cultivo colocado es igual al actual, evitamos colocarlo nuevamente
-                    if (ultimoCultivo != null && ultimoCultivo.getRiesgoAsociado() == cultivoSeleccionado.getRiesgoAsociado()) {
-                        continue; // Pasar a la siguiente celda
-                    }
-                    // Colocamos el cultivo en la celda vacía
-                    campo[i][j] = cultivoSeleccionado.getRiesgoAsociado(); // Aquí asignamos un valor del cultivo (ej. riesgo)
-                }
-            }
-        }
-    }
 
 
 
