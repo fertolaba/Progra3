@@ -45,17 +45,14 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
 
                     repetirCultivo(campo, cultivoSeleccionado, distribucionActual.get(distribucionActual.size() - 1));
 
-
-
                     int sig_x = x;
                     int sig_y = y + (cultivoSeleccionado.getEsquinaInferiorDerecha().getY() - cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY() + 1); // Altura del cultivo
-                    while (sig_x < campo.length && campo[sig_x][sig_y] != 0) {
-                        sig_y = sig_y + 1; // Avanzamos una columna
-
-                        // Si llegamos al final de la columna, avanzamos a la siguiente fila
+                    while (sig_x < campo.length && (sig_y >= campo[0].length || campo[sig_x][sig_y] != 0)) {
                         if (sig_y >= campo[0].length) {
-                            sig_x = sig_x + 1; // Avanzamos a la siguiente fila
-                            sig_y = 0; // Reiniciamos a la primera columna
+                            sig_x++;      // Avanzamos a la siguiente fila
+                            sig_y = 0;    // Reiniciamos la columna al inicio de la nueva fila
+                        } else {
+                            sig_y++;      // Avanzamos al siguiente "y" en la misma fila
                         }
                     }
 
@@ -122,24 +119,17 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         // Recorre cada celda del campo
         for (int i = 0; i < campo.length; i++) {
             for (int j = 0; j < campo[0].length; j++) {
-                // Verifica si la celda está vacía (0 representa una celda vacía)
+                // Verifica si la celda está vacía
                 if (campo[i][j] == 0) {
                     // Verifica si no hay colisión al colocar el cultivo seleccionado
                     if (colisionan(campo, cultivoSeleccionado, i, j)) {
-                        // Verifica si el último cultivo colocado es igual al actual, evitamos colocarlo nuevamente
-                        if (ultimoCultivo != null && ultimoCultivo.getRiesgoAsociado() == cultivoSeleccionado.getRiesgoAsociado()) {
-                            continue; // Evita colocar el mismo cultivo consecutivamente
-                        }
-                        // Coloca el valor del cultivo en la celda (usando el valor de riesgo asociado)
+                        // Coloca el valor del cultivo en la celda (usando el valor de riesgo asociado xq es el unico que es un double xd)
                         campo[i][j] = cultivoSeleccionado.getRiesgoAsociado();
                     }
                 }
             }
         }
     }
-
-
-
 
 
     private double calcularPotencial(double riesgoAsociado, double precioDeVentaPorParcela, double costoPorParcela){
@@ -212,10 +202,6 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         // Si no hay colisiones, devuelve verdadero
         return true;
     }
-
-
-
-
 
     private double sumaGanancias(List<CultivoSeleccionado> distribucion){
         double total=0;
