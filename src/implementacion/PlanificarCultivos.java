@@ -19,8 +19,9 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
             }
         }
         double[][] matrizRiesgo = coordenadas;
+        CultivoSeleccionado cultivoRepetido=null;
 
-        mejorDistribucion = backtracking(campo, cultivos, temporadaActual, 0, 0, distribucionActual, mejorDistribucion, matrizRiesgo);
+        mejorDistribucion = backtracking(campo, cultivos, temporadaActual, 0, 0, distribucionActual, mejorDistribucion, matrizRiesgo, cultivoRepetido);
 
         return mejorDistribucion;
     }
@@ -48,7 +49,7 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
 
                     distribucionActual.add(cultivoSeleccionado);
                     agregarAlCampo(campo,cultivoSeleccionado);
-                    
+
                     if(cultivoRepetido==null){
                         cultivoRepetido=cultivoSeleccionado;
                     }
