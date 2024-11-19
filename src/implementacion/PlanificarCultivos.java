@@ -11,7 +11,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         System.out.println("Iniciando obtención de planificación...");
         List<CultivoSeleccionado> distribucionActual = new ArrayList<>();
         List<CultivoSeleccionado> mejorDistribucion = new ArrayList<>();
-        double[][] campo = new double[10][10];
+        double[][] campo = new double[100][100];
 
         return backtracking(0, var1, campo, 0.0, distribucionActual, 0.0, mejorDistribucion, var3, var2);
     }
