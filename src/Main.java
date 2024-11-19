@@ -14,7 +14,7 @@ public class Main {
         Cultivo cultivo = new Cultivo();
         cultivo.setNombre("Lechuga");
         cultivo.setCostoPorParcela(100.5);
-        cultivo.setInversionRequerida(2000);
+        cultivo.setInversionRequerida(4000);
         cultivo.setPrecioDeVentaPorParcela(500);
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);

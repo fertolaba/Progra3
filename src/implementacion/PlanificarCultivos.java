@@ -65,7 +65,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                                         cultivo.getInversionRequerida(), 0, ganancia);
 
                                 // Comprobar si esta configuración tiene mejor ganancia
-                                if (tieneMejorGanancia(distribucionActual, mejorDistribucion, ganancia, gananciaActual)) {
+                                if (compararGanancias(distribucionActual, mejorDistribucion, ganancia, gananciaActual)) {
                                     distribucionActual.add(cultivoSeleccionado); // Agregar el cultivo a la distribución actual
                                     mejorDistribucion = backtracking(etapa + 1, cultivos, campo, gananciaActual + ganancia,
                                             distribucionActual, mejorGanancia, mejorDistribucion, temporadaActual, matrizRiesgo);
@@ -109,7 +109,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         return true;
     }
 
-    public boolean tieneMejorGanancia(List<CultivoSeleccionado> distribucionActual,List<CultivoSeleccionado> mejorDistribucion,double ganancia,double gananciaActual){
+    public boolean compararGanancias(List<CultivoSeleccionado> distribucionActual,List<CultivoSeleccionado> mejorDistribucion,double ganancia,double gananciaActual){
         double mejorGanancia = 0;
         int i =0;
         while(i<distribucionActual.size() && mejorDistribucion.size()>=distribucionActual.size()){
