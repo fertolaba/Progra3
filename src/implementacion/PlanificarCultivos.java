@@ -1,224 +1,200 @@
 package implementacion;
 
-import Lib.Cultivo;
-import Lib.CultivoSeleccionado;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PlanificarCultivos implements Lib.PlanificarCultivos {
+public class PlanificarCultivos implements PlanificadorCultivos {
+
     @Override
-    public List<CultivoSeleccionado> obtenerPlanificacion(List<Cultivo>  cultivos, double[][] coordenadas, String temporadaActual) {
+    public List<CultivoSeleccionado> obtenerPlanificacion(List<Cultivo> var1, double[][] var2, String var3) {
+        System.out.println("Iniciando obtención de planificación...");
         List<CultivoSeleccionado> distribucionActual = new ArrayList<>();
         List<CultivoSeleccionado> mejorDistribucion = new ArrayList<>();
-        String[][] campo = new String[100][100];
-        for (int i=0; i<100; i++){
-            for (int j=0; j<100; j++){
-                campo[i][j]="";  //campo es una matriz donde se va a guardar el nombre del cultivo q lo ocupa
-            }
-        }
-        double[][] matrizRiesgo = coordenadas;
-        CultivoSeleccionado cultivoRepetido=null;
+        double[][] campo = new double[100][100];
 
-        mejorDistribucion = backtracking(campo, cultivos, temporadaActual, 0, 0, distribucionActual, mejorDistribucion, matrizRiesgo, cultivoRepetido);
-
-        return mejorDistribucion;
+        return backtracking(0, var1, campo, 0.0, distribucionActual, 0.0, mejorDistribucion, var3, var2);
     }
 
-    private List<CultivoSeleccionado> backtracking(String[][] campo, List<Cultivo> cultivos, String temporadaActual, int x, int y,
-                              List<CultivoSeleccionado> distribucionActual, List<CultivoSeleccionado> mejorDistribucion,double[][] matrizRiesgo, CultivoSeleccionado cultivoRepetido){
-        if (x>=campo.length){
-            double gananciaActual= sumaGanancias(distribucionActual);
-            double gananciaMejor=sumaGanancias(mejorDistribucion);
+    private List<CultivoSeleccionado> backtracking(int nivel, List<Cultivo> cultivos, double[][] campo, double gananciaActual,
+                                                   List<CultivoSeleccionado> distribucionActual, double mejorGanancia,
+                                                   List<CultivoSeleccionado> mejorDistribucion, String temporadaActual, double[][] matrizRiesgo) {
+        System.out.println("Ciclo backtracking - Nivel: " + nivel);
 
-            if (gananciaActual>gananciaMejor){
-                mejorDistribucion=distribucionActual;
+        if (nivel >= cultivos.size()) {
+            System.out.println("Fin de nivel alcanzado con ganancia actual: " + gananciaActual);
+            if (gananciaActual > mejorGanancia) {
+                mejorDistribucion.clear();
+                mejorDistribucion.addAll(new ArrayList<>(distribucionActual));
+                System.out.println("Nueva mejor distribución encontrada con ganancia: " + gananciaActual);
             }
             return mejorDistribucion;
         }
 
-        for (int i=0; i<cultivos.size(); i++){
-            Cultivo cultivo=cultivos.get(i);
-            if(Objects.equals(cultivo.getTemporadaOptima(), temporadaActual)){
-                CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado();
+        Cultivo cultivo = cultivos.get(nivel);
+        Coordenada esquinaSuperiorIzquierda = new Coordenada();
+        Coordenada esquinaInferiorDerecha = new Coordenada();
+        double riesgoPromedio = 0;
+        double ganancia = 0;
 
-                if(puedoUbicar(campo,cultivoSeleccionado,  x, y)){
-                    double ganancia=gananciaCultivo(cultivo, cultivoSeleccionado, matrizRiesgo);
-                    double riesgoPromedio=riesgoPromedio(cultivoSeleccionado, matrizRiesgo);
+        for (int n = 1; n <= 10; n++) {
+            for (int m = 1; m <= 10; m++) {
+                for (int x = 0; x <= 100 - n; x++) {
+                    for (int y = 0; y <= 100 - m; y++) {
+                        // Se asignan dinámicamente las coordenadas
+                        esquinaSuperiorIzquierda.setX(x);
+                        esquinaSuperiorIzquierda.setY(y);
+                        esquinaInferiorDerecha.setX(x + n);
+                        esquinaInferiorDerecha.setY(y + m);
 
-                    distribucionActual.add(cultivoSeleccionado);
-                    agregarAlCampo(campo,cultivoSeleccionado);
+                        // Verifica si el cultivo puede ser ubicado en esa área
+                        if (puedoUbicar(esquinaSuperiorIzquierda, esquinaInferiorDerecha, campo)) {
+                            // Calcula el riesgo promedio y la ganancia para el cultivo en esa área
+                            riesgoPromedio = calculariesgoPromedio(esquinaSuperiorIzquierda.getX(), esquinaSuperiorIzquierda.getY(),
+                                    esquinaInferiorDerecha.getX(), esquinaInferiorDerecha.getY(), matrizRiesgo);
+                            ganancia = gananciaCultivo(cultivo, new CultivoSeleccionado(cultivo.getNombre(), esquinaSuperiorIzquierda,
+                                            esquinaInferiorDerecha, cultivo.getInversionRequerida(), (int) riesgoPromedio, ganancia), matrizRiesgo,
+                                    esquinaSuperiorIzquierda.getX(), esquinaSuperiorIzquierda.getY(),
+                                    esquinaInferiorDerecha.getX(), esquinaInferiorDerecha.getY());
 
-                    if(cultivoRepetido==null){
-                        cultivoRepetido=cultivoSeleccionado;
-                    }
-                    repetirCultivo(campo, cultivoRepetido, distribucionActual.get(distribucionActual.size() - 1));
+                            // Si el cultivo puede ser ubicado, se agrega a la distribución
+                            if (rellenar(esquinaSuperiorIzquierda, esquinaInferiorDerecha, distribucionActual, campo)) {
+                                CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado(cultivo.getNombre(),
+                                        esquinaSuperiorIzquierda, esquinaInferiorDerecha, cultivo.getInversionRequerida(),
+                                        (int) riesgoPromedio, ganancia);
+                                distribucionActual.add(cultivoSeleccionado);
+                                System.out.println("Cultivo añadido: " + cultivoSeleccionado.getNombreCultivo());
 
+                                // Llama recursivamente al backtracking para el siguiente cultivo
+                                mejorDistribucion = backtracking(nivel + 1, cultivos, campo, gananciaActual + ganancia,
+                                        distribucionActual, mejorGanancia, mejorDistribucion, temporadaActual, matrizRiesgo);
 
-                    if (colisionan(campo, cultivoSeleccionado, x, y)) {
-                        continue; // Pasa al siguiente cultivo en la lista
-                    }
-
-                    int sig_x = x;
-                    int sig_y = y + (cultivoSeleccionado.getEsquinaInferiorDerecha().getY() - cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY() + 1); // Altura del cultivo
-                    while (sig_x < campo.length && (sig_y >= campo[0].length || !campo[sig_x][sig_y].equals(""))) {
-                        if (sig_y >= campo[0].length) {
-                            sig_x++;      // Avanzamos a la siguiente fila
-                            sig_y = 0;    // Reiniciamos la columna al inicio de la nueva fila
-                        } else {
-                            sig_y++;      // Avanzamos al siguiente "y" en la misma fila
+                                // Elimina el cultivo de la distribución actual y vuelve atrás
+                                distribucionActual.remove(distribucionActual.size() - 1);
+                                System.out.println("Volviendo atrás, distribuciones actuales: " + distribucionActual.size() + " cultivos.");
+                            }
                         }
                     }
-
-                    mejorDistribucion = backtracking(campo, cultivos, temporadaActual, sig_x, sig_y, distribucionActual, mejorDistribucion, matrizRiesgo, cultivoRepetido);
-
-                    distribucionActual.remove(distribucionActual.size() - 1);
-                    eliminarDelCampo(campo, cultivoSeleccionado);
                 }
-
             }
         }
 
         return mejorDistribucion;
     }
 
-    private boolean puedoUbicar(String [][] campo,CultivoSeleccionado cultivoSeleccionado, int x, int y){
-        //Verifica que el cultivo no se exceda por derecha y x por "debajo"
-        if (cultivoSeleccionado.getEsquinaInferiorDerecha().getX() >= campo.length ||
-                cultivoSeleccionado.getEsquinaInferiorDerecha().getY() >= campo[0].length) {
+
+    private boolean puedoUbicar(Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double[][] campo) {
+        System.out.println("Verificando si se puede ubicar el cultivo en la posición: " +
+                "Izq: (" + esquinaSuperiorIzquierda.getX() + ", " + esquinaSuperiorIzquierda.getY() + ") " +
+                "Der: (" + esquinaInferiorDerecha.getX() + ", " + esquinaInferiorDerecha.getY() + ")");
+
+        // Verifica si las coordenadas superiores e inferiores están dentro del límite del campo
+        if (esquinaInferiorDerecha.getX() >= campo.length ||
+                esquinaInferiorDerecha.getY() >= campo[0].length ||
+                esquinaSuperiorIzquierda.getX() < 0 ||
+                esquinaSuperiorIzquierda.getY() < 0) {
+            System.out.println("No se puede ubicar, fuera de los límites.");
             return false;
         }
 
         // Recorre el área del cultivo seleccionado y revisa si no está ocupada la parcela
-        for (int i = cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX();
-             i <= cultivoSeleccionado.getEsquinaInferiorDerecha().getX();
-             i++) {
-            for (int j = cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY();
-                 j <= cultivoSeleccionado.getEsquinaInferiorDerecha().getY();
-                 j++) {
-                if (!campo[i][j].equals("")) {
+        for (int i = esquinaSuperiorIzquierda.getX(); i <= esquinaInferiorDerecha.getX(); i++) {
+            for (int j = esquinaSuperiorIzquierda.getY(); j <= esquinaInferiorDerecha.getY(); j++) {
+                if (i >= campo.length || j >= campo[0].length) {
+                    System.out.println("No se puede ubicar, fuera de los límites al verificar celdas.");
+                    return false;
+                }
+                // Si la celda está ocupada por cualquier valor mayor a 0.0 (por ejemplo, 0.1), no se puede ubicar
+                if (campo[i][j] > 0.0) {
+                    System.out.println("No se puede ubicar, área ocupada en la celda: (" + i + ", " + j + ")");
                     return false;
                 }
             }
         }
 
-        // Valida que no supere el campo por izquierda y por arriba
-        if (cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX() < 0 ||
-                cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY() < 0) {
-            return false;
-        }
-
-        //Verifica que la suma de filas y columnas del area a plantar no sea mayor a 11
-        if ((cultivoSeleccionado.getEsquinaInferiorDerecha().getX() - cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX() +
-                cultivoSeleccionado.getEsquinaInferiorDerecha().getY() - cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY()) > 11) {
+        // Verifica que la suma de filas y columnas del área a plantar no sea mayor a 11
+        if ((esquinaInferiorDerecha.getX() - esquinaSuperiorIzquierda.getX() +
+                esquinaInferiorDerecha.getY() - esquinaSuperiorIzquierda.getY()) > 11) {
+            System.out.println("No se puede ubicar, el área es demasiado grande.");
             return false;
         }
 
         return true;
     }
 
-    public void repetirCultivo(String[][] campo, CultivoSeleccionado cultivoSeleccionado, CultivoSeleccionado ultimoCultivo) {
-        // Recorre cada celda del campo
-        for (int i = 0; i < campo.length; i++) {
-            for (int j = 0; j < campo[0].length; j++) {
-                // Verifica si la celda está vacía
-                if (campo[i][j].equals("")) {  //si las celdas nunca van hacer null no es necesario usar objetcs.equals xddddddddddddddddd
-                    // Verifica si no hay colisión al colocar el cultivo seleccionado
-                    if (!(colisionan(campo, cultivoSeleccionado, i, j))) {  //agrego el not ya que me parece mas logico que si la funcion se llama colisionan devuelva true cuando lo hacen y false cuando no colisionan xd
-                        // Coloca el valor del cultivo en la celda (usando el valor de riesgo asociado xq es el unico que es un double xd)
-                        campo[i][j] = cultivoSeleccionado.getNombreCultivo();
-                    }
-                }
+
+
+
+    private boolean rellenar(Coordenada izq, Coordenada der, List<CultivoSeleccionado> distribucionActual, double[][] campo) {
+        System.out.println("Rellenando área con cultivo desde: (" + izq.getX() + ", " + izq.getY() + ") hasta: (" + der.getX() + ", " + der.getY() + ")");
+        for (CultivoSeleccionado cultivo : distribucionActual) {
+            // Llamada a la función de validación de ubicación
+            if (!puedoUbicar(cultivo.getEsquinaSuperiorIzquierda(), cultivo.getEsquinaInferiorDerecha(), campo)) {
+                System.out.println("No se puede colocar el cultivo, posición ocupada.");
+                return false;
             }
         }
+        // Marca las áreas ocupadas si es posible colocar el cultivo
+        for (int i = izq.getX(); i <= der.getX(); i++) {
+            for (int j = izq.getY(); j <= der.getY(); j++) {
+                campo[i][j] = 1.0;  // Marca la celda como ocupada
+            }
+        }
+        return true;
     }
-    private double calcularPotencial(Cultivo cultivo,double[][] matrizRiesgo, int x, int y ){
-        double riesgoAsociado = matrizRiesgo[x][y];
 
-        return (1-riesgoAsociado)*(cultivo.getPrecioDeVentaPorParcela()-cultivo.getCostoPorParcela());
-}
+    private double calcularPotencial(Cultivo cultivo, double[][] matrizRiesgo, int xInicio, int yInicio, int xFin, int yFin) {
+        System.out.println("Calculando potencial para cultivo " + cultivo.getNombre() + " en el área: (" + xInicio + ", " + yInicio + ") a (" + xFin + ", " + yFin + ")");
+        double suma = 0;
+        for (int i = xInicio; i < xFin; i++) {
+            for (int j = yInicio; j < yFin; j++) {
+                suma += ((1 - matrizRiesgo[i][j])) * ((cultivo.getPrecioDeVentaPorParcela() - cultivo.getCostoPorParcela()));
+            }
+        }
+        return suma;
+    }
 
-    private double gananciaCultivo(Cultivo cultivo, CultivoSeleccionado cultivoSeleccionado, double[][] matrizRiesgo){
+    private double gananciaCultivo(Cultivo cultivo, CultivoSeleccionado cultivoSeleccionado, double[][] matrizRiesgo, int xInicio, int yInicio, int xFin, int yFin) {
+        System.out.println("Calculando ganancia para cultivo " + cultivo.getNombre());
         int inicioX = cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX();
         int inicioY = cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY();
         int finX = cultivoSeleccionado.getEsquinaInferiorDerecha().getX();
         int finY = cultivoSeleccionado.getEsquinaInferiorDerecha().getY();
-        double potencialTotal=0;
+        double potencialTotal = 0;
 
-        for (int i= inicioX;i<finX;i++){
-            for (int j = inicioY; j <= finY; j++) {
+        for (int i = inicioX; i < finX; i++) {
+            for (int j = inicioY; j < finY; j++) {
                 double riesgo = matrizRiesgo[i][j];
-                potencialTotal += calcularPotencial(cultivo, matrizRiesgo, i, j);
+                potencialTotal += calcularPotencial(cultivo, matrizRiesgo, xInicio, yInicio, xFin, yFin);
             }
         }
-        return potencialTotal-cultivo.getInversionRequerida();
+        return potencialTotal - cultivo.getInversionRequerida();
     }
 
-    private double riesgoPromedio(CultivoSeleccionado cultivoSeleccionado, double[][] matrizRiegso) {
-        Lib.Coordenada esquinaSuperiorIzquierda = cultivoSeleccionado.getEsquinaSuperiorIzquierda();
-        Lib.Coordenada esquinaInferiorDerecha = cultivoSeleccionado.getEsquinaInferiorDerecha();
-
-        int xInicio = esquinaSuperiorIzquierda.getX();
-        int yInicio = esquinaSuperiorIzquierda.getY();
-        int filas = esquinaInferiorDerecha.getX() - xInicio;    //elimino el -1, agrego <= en el for
-        int columnas = esquinaInferiorDerecha.getY() - yInicio; //elimino el -1, agrego <= en el for
-
+    private double calculariesgoPromedio(int xInicio, int yInicio, int xFin, int yFin, double[][] matrizRiesgo) {
+        System.out.println("Calculando riesgo promedio en el área: (" + xInicio + ", " + yInicio + ") a (" + xFin + ", " + yFin + ")");
         double riesgoTotal = 0;
-        for (int i = 0; i <= filas; i++) {
-            for (int j = 0; j <= columnas; j++) {
-                riesgoTotal += matrizRiegso[xInicio + i][yInicio + j];  //reemplazo campo x matriz de riesgo q es la q contiene los riesgos lol
+        int contador = 0;
+
+        // Recorre la matriz en el rango especificado, asegurándose de que los índices estén dentro de los límites
+        for (int i = xInicio; i < xFin; i++) {
+            for (int j = yInicio; j < yFin; j++) {
+                // Asegura que los índices no estén fuera de los límites de la matriz
+                if (i >= 0 && i < matrizRiesgo.length && j >= 0 && j < matrizRiesgo[i].length) {
+                    riesgoTotal += matrizRiesgo[i][j];
+                    contador++;
+                }
             }
         }
-        return riesgoTotal / (filas * columnas);
+
+        // Si el contador es 0 (por ejemplo, si no se ha encontrado ninguna celda válida), evita la división por cero
+        if (contador == 0) {
+            return 0; // Retorna 0 si no se han encontrado celdas válidas
+        }
+
+        // Calcula el riesgo promedio
+        return riesgoTotal / contador;
     }
 
-    private boolean colisionan(String[][] campo, CultivoSeleccionado cultivoSeleccionado, int i, int j) {
-        // Verifica si hay un cultivo en la celda de arriba contiene un cultivo diferente al seleccionado
-        if (i > 0 && !campo[i - 1][j].equals("") && !campo[i - 1][j].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return true; // Colisión con cultivo en la celda de arriba
-        }
 
-        // Verifica si hay un cultivo en la celda de abajo contiene un cultivo diferente al seleccionado
-        if (i < (campo.length - 1) && !campo[i + 1][j].equals("") && !campo[i + 1][j].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return true; // Colisión con cultivo en la celda de abajo
-        }
-
-        // Verifica si hay un cultivo en la celda de la izquierda contiene un cultivo diferente al seleccionado
-        if (j > 0 && !campo[i][j - 1].equals("") && !campo[i][j - 1].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return true; // Colisión con cultivo en la celda de la izquierda
-        }
-
-        // Verifica si hay un cultivo en la celda de la derecha contiene un cultivo diferente al seleccionado
-        if (j < campo[0].length - 1 && !campo[i][j + 1].equals("") && !campo[i][j + 1].equals(cultivoSeleccionado.getNombreCultivo())) {
-            return true; // Colisión con cultivo en la celda de la derecha
-        }
-
-
-        // Si no hay colisiones, devuelve verdadero
-        return false;
-    }
-
-    private double sumaGanancias(List<CultivoSeleccionado> distribucion){
-        double total=0;
-        for(int i=0; i< distribucion.size();i++){
-            total+=distribucion.get(i).getGananciaObtenida();
-        }
-        return total;
-    }
-
-    private void agregarAlCampo(String[][]campo, CultivoSeleccionado cultivoSeleccionado){
-        for(int i=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX(); i<=cultivoSeleccionado.getEsquinaInferiorDerecha().getX();i++){
-            for(int j=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY(); j<=cultivoSeleccionado.getEsquinaInferiorDerecha().getY(); j++){
-                campo[i][j]=cultivoSeleccionado.getNombreCultivo();
-            }
-        }
-    }
-    private void eliminarDelCampo(String[][]campo, CultivoSeleccionado cultivoSeleccionado){
-        for(int i=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX(); i<=cultivoSeleccionado.getEsquinaInferiorDerecha().getX();i++){
-            for(int j=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY(); j<=cultivoSeleccionado.getEsquinaInferiorDerecha().getY(); j++){
-                campo[i][j]="";
-            }
-        }
-    }
 }

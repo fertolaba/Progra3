@@ -1,6 +1,5 @@
 package implementacion;
 
-import Lib.Coordenada;
 
 public class CultivoSeleccionado {
     private String nombreCultivo;
