@@ -35,10 +35,37 @@ public class Main {
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
 
+        cultivo = new Cultivo();
+        cultivo.setNombre("Tomate");
+        cultivo.setCostoPorParcela(110.0);
+        cultivo.setInversionRequerida(2500);
+        cultivo.setPrecioDeVentaPorParcela(600);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
 
+        cultivo = new Cultivo();
+        cultivo.setNombre("Zanahoria");
+        cultivo.setCostoPorParcela(90.0);
+        cultivo.setInversionRequerida(1200);
+        cultivo.setPrecioDeVentaPorParcela(430);
+        cultivo.setTemporadaOptima("Primavera");
+        cultivos.add(cultivo);
 
+        cultivo = new Cultivo();
+        cultivo.setNombre("Maíz");
+        cultivo.setCostoPorParcela(130.0);
+        cultivo.setInversionRequerida(2200);
+        cultivo.setPrecioDeVentaPorParcela(580);
+        cultivo.setTemporadaOptima("Verano");
+        cultivos.add(cultivo);
 
-
+        cultivo = new Cultivo();
+        cultivo.setNombre("Espinaca");
+        cultivo.setCostoPorParcela(85.0);
+        cultivo.setInversionRequerida(1400);
+        cultivo.setPrecioDeVentaPorParcela(460);
+        cultivo.setTemporadaOptima("Invierno");
+        cultivos.add(cultivo);
 
         cultivo = new Cultivo();
         cultivo.setNombre("Brócoli");
@@ -47,6 +74,15 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(510);
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
+        cultivo.setNombre("Banana");
+        cultivo.setCostoPorParcela(185.0);
+        cultivo.setInversionRequerida(100);
+        cultivo.setPrecioDeVentaPorParcela(100);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
 
 
         double[][] riesgos = new double[100][100];
@@ -71,12 +107,9 @@ public class Main {
     }
 
     private static void imprimirResultado(List<CultivoSeleccionado> res) {
-        if (res == null || res.isEmpty()) {
-            System.out.println("No se seleccionaron cultivos.");
-        } else {
-            for (CultivoSeleccionado cultivo : res) {
-                System.out.println(cultivo);
-            }
+        System.out.println("Matriz de resultados");
+        for (CultivoSeleccionado cultivo : res) {
+            System.out.println(cultivo);
         }
     }
 }
