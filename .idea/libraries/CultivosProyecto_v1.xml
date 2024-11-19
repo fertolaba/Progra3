@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="CultivosProyecto_v1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../progra3/CultivosLibreria_v1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../progra3/CultivosProyecto_v1.jar!/" />
+    </SOURCES>
+  </library>
+</component>
