@@ -56,8 +56,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                                 double potencialTotal = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo);
                                 double ganancia = potencialTotal - cultivo.getInversionRequerida();
 
-                                CultivoSeleccionado cultivoSeleccionado1 = new CultivoSeleccionado(cultivo.getNombre(),esquinaSuperiorIzquierda,esquinaInferiorDerecha,
-                                        cultivo.getInversionRequerida(), (int) riesgoPromedio,ganancia);
 
                                 // Crear el objeto de cultivo seleccionado
                                 CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado(
