@@ -6,13 +6,13 @@ public class CultivoSeleccionado {
     private Coordenada esquinaSuperiorIzquierda;
     private Coordenada esquinaInferiorDerecha;
     private double montoInvertido;
-    private int riesgoAsociado;
+    private double riesgoAsociado;
     private double gananciaObtenida;
 
     public CultivoSeleccionado() {
     }
 
-    public CultivoSeleccionado(String nombreCultivo, Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double montoInvertido, int riesgoAsociado, double gananciaObtenida) {
+    public CultivoSeleccionado(String nombreCultivo, Coordenada esquinaSuperiorIzquierda, Coordenada esquinaInferiorDerecha, double montoInvertido, double riesgoAsociado, double gananciaObtenida) {
         this.nombreCultivo = nombreCultivo;
         this.esquinaSuperiorIzquierda = esquinaSuperiorIzquierda;
         this.esquinaInferiorDerecha = esquinaInferiorDerecha;
@@ -53,7 +53,7 @@ public class CultivoSeleccionado {
         this.montoInvertido = montoInvertido;
     }
 
-    public int getRiesgoAsociado() {
+    public double getRiesgoAsociado() {
         return this.riesgoAsociado;
     }
 
