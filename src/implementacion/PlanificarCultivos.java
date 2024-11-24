@@ -51,10 +51,16 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 for (int n = 1; n <= 10; n++) {
                     for (int m = 1; m <= 10; m++) {
                         if (n + m <= 11) {
+                            if(etapa==cultivos.size()-1){
+                                rellenarEspacios(cultivo, campo, distribucionActual, matrizRiesgo);
+                            }
                             CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado();
                             cultivoSeleccionado.setNombreCultivo(cultivo.getNombre());
                             cultivoSeleccionado.setEsquinaSuperiorIzquierda(new Coordenada(x, y));
                             cultivoSeleccionado.setEsquinaInferiorDerecha(new Coordenada(x + n - 1, y + m - 1));
+
+
+
                             if (puedeUbicar(cultivoSeleccionado, campo)) {
                                 double riesgoPromedio = calcularRiesgoPromedio(matrizRiesgo, cultivoSeleccionado);
 
@@ -149,8 +155,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
     }
 
 
-
-
     private boolean rellenar(Coordenada izq, Coordenada der, List<CultivoSeleccionado> distribucionActual, double[][] campo) {
 
         for (int i = izq.getX(); i <= der.getX(); i++) {
@@ -168,6 +172,37 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
         return true;
     }
+
+    private void rellenarEspacios(Cultivo cultivo, double[][] campo, List<CultivoSeleccionado> distribucionActual, double[][] matrizRiesgo) {
+        for (int x = 0; x < campo.length; x++) {
+            for (int y = 0; y < campo[0].length; y++) {
+                for (int n = 1; n <= 10; n++) {
+                    for (int m = 1; m <= 10; m++) {
+                        if (n + m <= 11) {
+                            Coordenada izq = new Coordenada(x, y);
+                            Coordenada der = new Coordenada(x + n - 1, y + m - 1);
+                            CultivoSeleccionado cultivoSeleccionado=new CultivoSeleccionado();
+                            cultivoSeleccionado.setNombreCultivo(cultivo.getNombre());
+                            cultivoSeleccionado.setEsquinaInferiorDerecha(der);
+                            cultivoSeleccionado.setEsquinaSuperiorIzquierda(izq);
+                            if (puedeUbicar(cultivoSeleccionado, campo)) {
+                                double riesgoPromedio = calcularRiesgoPromedio(matrizRiesgo, cultivoSeleccionado);
+                                double ganancia = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo) - cultivo.getInversionRequerida();
+
+                                cultivoSeleccionado.setGananciaObtenida(ganancia);
+                                cultivoSeleccionado.setMontoInvertido(cultivo.getInversionRequerida());
+                                cultivoSeleccionado.setRiesgoAsociado((int) riesgoPromedio);
+
+                                distribucionActual.add(cultivoSeleccionado);
+                                marcarComoOcupado(cultivoSeleccionado, campo);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     public double CalcularPotencial(int xInicio, int yInicio, int xFin, int yFin, Cultivo cultivo, double[][] matrizRiesgo) {
         double suma = 0;
