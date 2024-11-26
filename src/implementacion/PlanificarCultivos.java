@@ -208,11 +208,11 @@ public class PlanificarCultivos implements PlanificadorCultivos {
     }
 
     private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> distribucionActual, double[][] campo, double[][]matrizRiesgo) {
-        for(int n=1;n<=10;n++){
-            for(int m =1;m<=10;m++){
-                if(n+m<=11){
-                    for (int x =0 ; x <= 100 - n; x++) {
-                        for (int y = 0; y <= 100 - m; y++) {
+        for(int x=0;x<=100;x++){
+            for(int y =1;y<=100;y++){
+                for (int n =1 ; n <= 10 ; n++) {
+                    for (int m = 1; m <= 10 ; m++) {
+                        if(n+m<=11){
                             Coordenada izq = new Coordenada(x, y);
                             Coordenada der = new Coordenada(x + n - 1, y + m - 1);
                             CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado();
@@ -239,8 +239,10 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
                             }
                         }
-                    }
+                        }
+
                 }
+
             }
         }
         return distribucionActual;
