@@ -14,11 +14,9 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
         mejorDistribucion = backtracking(0, var1, campo, 0.0, distribucionActual, 0.0, mejorDistribucion, var3, var2);
 
-        List<CultivoSeleccionado> resultadoRellenado = rellenarEspaciosFer(var1.get(var1.size() - 1), mejorDistribucion, var2);
-
 //        System.out.println("Estado final del campo:");
 //        imprimirCampo(campo);
-        return  resultadoRellenado;
+        return  mejorDistribucion;
     }
 
     private List<CultivoSeleccionado> backtracking(
@@ -33,7 +31,11 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 mejorGanancia = gananciaActual;  // Actualizar la mejor ganancia
                 mejorDistribucion = new ArrayList<>(distribucionActual);
             }
-
+            int i=cultivos.size()-1;
+            while(!Objects.equals(cultivos.get(i).getTemporadaOptima(), temporadaActual)){
+                i--;
+            }
+            mejorDistribucion=rellenarEspacios(cultivos.get(i), mejorDistribucion, campo,matrizRiesgo);
             return mejorDistribucion;
         }
 
@@ -114,8 +116,13 @@ public class PlanificarCultivos implements PlanificadorCultivos {
             for (int y = cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY();
                  y <= cultivoSeleccionado.getEsquinaInferiorDerecha().getY(); y++) {
                 campo[x][y] = 1.0; // Marcar como ocupado
+                if (x<99 && y<99){  //Marcar como ocupado para q no se genere un rectangulo de n+m>11
+                    campo[x+1][y+1]=1.0;
+                }
+
             }
         }
+
     }
 
     private void liberarCasillas(CultivoSeleccionado cultivoSeleccionado, double[][] campo) {
@@ -200,7 +207,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         return horizontalmenteAdyacentes || verticalmenteAdyacentes;
     }
 
-    private List<CultivoSeleccionado> rellenarEspaciosFer(Cultivo cultivo, List<CultivoSeleccionado> distribucionActual, double[][] campo) {
+    private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> distribucionActual, double[][] campo, double[][]matrizRiesgo) {
         for(int n=1;n<=10;n++){
             for(int m =1;m<=10;m++){
                 if(n+m<=11){
@@ -216,9 +223,8 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                             // Validar restricciones y que no se solape con la distribución actual
                             if (puedeUbicar(cultivoSeleccionado, campo) &&
                                     validarRestriccionUnion(cultivoSeleccionado, distribucionActual)) {
-                                // Calcular métricas
-                                double riesgoPromedio = calcularRiesgoPromedio(campo, cultivoSeleccionado);
-                                double ganancia = CalcularPotencial(x, y, x + n, y + m, cultivo, campo) - cultivo.getInversionRequerida();
+                                double riesgoPromedio = calcularRiesgoPromedio(matrizRiesgo, cultivoSeleccionado);
+                                double ganancia = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo) - cultivo.getInversionRequerida();
 
                                 // Asegurarse de que la región sea válida antes de usarla
                                 if (Double.isFinite(riesgoPromedio)) {
@@ -238,55 +244,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
             }
         }
         return distribucionActual;
-    }
-
-    private void rellenarEspacios(Cultivo cultivo, double[][] campo, List<CultivoSeleccionado> distribucionActual, double[][] matrizRiesgo) {
-        for (int x = 0; x < campo.length; x++) {
-            for (int y = 0; y < campo[0].length; y++) {
-                for (int n = 1; n <= 10; n++) {
-                    for (int m = 1; m <= 10; m++) {
-                        if (n + m <= 11) {
-                            Coordenada izq = new Coordenada(x, y);
-                            Coordenada der = new Coordenada(x + n - 1, y + m - 1);
-                            CultivoSeleccionado cultivoSeleccionado=new CultivoSeleccionado();
-                            cultivoSeleccionado.setNombreCultivo(cultivo.getNombre());
-                            cultivoSeleccionado.setEsquinaInferiorDerecha(der);
-                            cultivoSeleccionado.setEsquinaSuperiorIzquierda(izq);
-                            if (puedeUbicar(cultivoSeleccionado, campo)) {
-                                double riesgoPromedio = calcularRiesgoPromedio(matrizRiesgo, cultivoSeleccionado);
-                                double ganancia = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo) - cultivo.getInversionRequerida();
-
-                                cultivoSeleccionado.setGananciaObtenida(ganancia);
-                                cultivoSeleccionado.setMontoInvertido(cultivo.getInversionRequerida());
-                                cultivoSeleccionado.setRiesgoAsociado(riesgoPromedio);
-
-                                distribucionActual.add(cultivoSeleccionado);
-                                marcarComoOcupado(cultivoSeleccionado, campo);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    private boolean rellenar(Coordenada izq, Coordenada der, List<CultivoSeleccionado> distribucionActual, double[][] campo) {
-
-        for (int i = izq.getX(); i <= der.getX(); i++) {
-            for (int j = izq.getY(); j <= der.getY(); j++) {
-                if (campo[i][j] > 0.0) {
-                    return false;
-                }
-            }
-        }
-        for (int i = izq.getX(); i <= der.getX(); i++) {
-            for (int j = izq.getY(); j <= der.getY(); j++) {
-                campo[i][j] = 1.0;
-            }
-        }
-
-        return true;
     }
 
     public double CalcularPotencial(int xInicio, int yInicio, int xFin, int yFin, Cultivo cultivo, double[][] matrizRiesgo) {

@@ -60,6 +60,14 @@ public class Main {
         cultivos.add(cultivo);
 
         cultivo = new Cultivo();
+        cultivo.setNombre("Brócoli");
+        cultivo.setCostoPorParcela(115.0);
+        cultivo.setInversionRequerida(1800);
+        cultivo.setPrecioDeVentaPorParcela(510);
+        cultivo.setTemporadaOptima("Otoño");
+        cultivos.add(cultivo);
+
+        cultivo = new Cultivo();
         cultivo.setNombre("Espinaca");
         cultivo.setCostoPorParcela(85.0);
         cultivo.setInversionRequerida(1400);
@@ -67,13 +75,7 @@ public class Main {
         cultivo.setTemporadaOptima("Invierno");
         cultivos.add(cultivo);
 
-        cultivo = new Cultivo();
-        cultivo.setNombre("Brócoli");
-        cultivo.setCostoPorParcela(115.0);
-        cultivo.setInversionRequerida(1800);
-        cultivo.setPrecioDeVentaPorParcela(510);
-        cultivo.setTemporadaOptima("Otoño");
-        cultivos.add(cultivo);
+
 
 
 
