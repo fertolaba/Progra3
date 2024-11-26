@@ -14,8 +14,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
         mejorDistribucion = backtracking(0, var1, campo, 0.0, distribucionActual, 0.0, mejorDistribucion, var3, var2);
 
-//        System.out.println("Estado final del campo:");
-//        imprimirCampo(campo);
+
         return  mejorDistribucion;
     }
 
@@ -36,6 +35,9 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 i--;
             }
             mejorDistribucion=rellenarEspacios(cultivos.get(i), mejorDistribucion, campo,matrizRiesgo);
+
+            System.out.println("Estado final del campo:");
+            imprimirCampo(campo);
             return mejorDistribucion;
         }
 
@@ -275,5 +277,15 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         }
         return riesgoTotal / totalParcelas;
     }
+
+    private void imprimirCampo(double[][] campo) {
+        for (int i = 0; i < campo.length; i++) {
+            for (int j = 0; j < campo[i].length; j++) {
+                System.out.print(campo[i][j] + "\t"); 
+            }
+            System.out.println();
+        }
+    }
+
 
 }
