@@ -57,7 +57,7 @@ public class CultivoSeleccionado {
         return this.riesgoAsociado;
     }
 
-    public void setRiesgoAsociado(int riesgoAsociado) {
+    public void setRiesgoAsociado(double riesgoAsociado) {
         this.riesgoAsociado = riesgoAsociado;
     }
 
