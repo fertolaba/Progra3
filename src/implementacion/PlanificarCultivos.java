@@ -36,8 +36,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
             }
             mejorDistribucion=rellenarEspacios(cultivos.get(i), mejorDistribucion, campo,matrizRiesgo);
 
-            System.out.println("Estado final del campo:");
-            imprimirCampo(campo);
             return mejorDistribucion;
         }
 
@@ -209,7 +207,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         return horizontalmenteAdyacentes || verticalmenteAdyacentes;
     }
 
-    private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> distribucionActual, double[][] campo, double[][]matrizRiesgo) {
+    private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion, double[][] campo, double[][]matrizRiesgo) {
         for(int x=0;x<=100;x++){
             for(int y =1;y<=100;y++){
                 for (int n =1 ; n <= 10 ; n++) {
@@ -224,7 +222,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
                             // Validar restricciones y que no se solape con la distribución actual
                             if (puedeUbicar(cultivoSeleccionado, campo) &&
-                                    validarRestriccionUnion(cultivoSeleccionado, distribucionActual)) {
+                                    validarRestriccionUnion(cultivoSeleccionado, mejorDistribucion)) {
                                 double riesgoPromedio = calcularRiesgoPromedio(matrizRiesgo, cultivoSeleccionado);
                                 double ganancia = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo) - cultivo.getInversionRequerida();
 
@@ -235,7 +233,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                                     cultivoSeleccionado.setRiesgoAsociado(riesgoPromedio);
 
                                     // Marcar la región ocupada
-                                    distribucionActual.add(cultivoSeleccionado);
+                                    mejorDistribucion.add(cultivoSeleccionado);
                                     marcarComoOcupado(cultivoSeleccionado, campo);
                                 }
 
@@ -247,7 +245,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
             }
         }
-        return distribucionActual;
+        return mejorDistribucion;
     }
 
     public double CalcularPotencial(int xInicio, int yInicio, int xFin, int yFin, Cultivo cultivo, double[][] matrizRiesgo) {
@@ -278,14 +276,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         return riesgoTotal / totalParcelas;
     }
 
-    private void imprimirCampo(double[][] campo) {
-        for (int i = 0; i < campo.length; i++) {
-            for (int j = 0; j < campo[i].length; j++) {
-                System.out.print(campo[i][j] + "\t"); 
-            }
-            System.out.println();
-        }
-    }
 
 
 }
