@@ -91,8 +91,8 @@ public class Main {
     }
 
     private static void imprimirMatrizDeRiesgos(double[][] riesgos) {
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
                 System.out.print(riesgos[i][j] + "\t");
             }
             System.out.println();
