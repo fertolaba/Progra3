@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="CultivosLibreria" level="project" />
     <orderEntry type="library" name="CultivosProyecto" level="project" />
+    <orderEntry type="library" name="CultivosLibreria_v1" level="project" />
   </component>
 </module>
