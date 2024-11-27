@@ -274,5 +274,4 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                         cultivo2.getEsquinaInferiorDerecha().getY() + 1 == cultivo1.getEsquinaSuperiorIzquierda().getY();
 
         return horizontalmenteAdyacentes || verticalmenteAdyacentes;
-    }
-}
+    }  }
