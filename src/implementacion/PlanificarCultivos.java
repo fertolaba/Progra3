@@ -119,7 +119,7 @@ public class PlanificarCultivos implements Lib.PlanificarCultivos {
         // Recorre cada celda del campo
         for (int i = 0; i < campo.length; i++) {
             for (int j = 0; j < campo[0].length; j++) {
-                // Verifica si la celda está vacía
+                // Verifica si la celda está vacíayh
                 if (campo[i][j] == 0) {
                     // Verifica si no hay colisión al colocar el cultivo seleccionado
                     if (colisionan(campo, cultivoSeleccionado, i, j)) {
