@@ -86,7 +86,7 @@ public class Main {
                 riesgos[i][j] = (i + j) / 200.0;
             }
         }
-//        imprimirMatrizDeRiesgos(riesgos);
+        imprimirMatrizDeRiesgos(riesgos);
 
         List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos,"Otoño");
         imprimirResultado(res);
