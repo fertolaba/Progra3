@@ -26,7 +26,7 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(450);
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
-
+//
         cultivo = new Cultivo();
         cultivo.setNombre("Calabaza");
         cultivo.setCostoPorParcela(97);
@@ -34,15 +34,15 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(475);
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
-
-        cultivo = new Cultivo();
-        cultivo.setNombre("Tomate");
-        cultivo.setCostoPorParcela(110.0);
-        cultivo.setInversionRequerida(2500);
-        cultivo.setPrecioDeVentaPorParcela(600);
-        cultivo.setTemporadaOptima("Verano");
-        cultivos.add(cultivo);
-
+//
+//        cultivo = new Cultivo();
+//        cultivo.setNombre("Tomate");
+//        cultivo.setCostoPorParcela(110.0);
+//        cultivo.setInversionRequerida(2500);
+//        cultivo.setPrecioDeVentaPorParcela(600);
+//        cultivo.setTemporadaOptima("Verano");
+//        cultivos.add(cultivo);
+//
         cultivo = new Cultivo();
         cultivo.setNombre("Zanahoria");
         cultivo.setCostoPorParcela(90.0);
@@ -50,7 +50,7 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(430);
         cultivo.setTemporadaOptima("Primavera");
         cultivos.add(cultivo);
-
+//
         cultivo = new Cultivo();
         cultivo.setNombre("Maíz");
         cultivo.setCostoPorParcela(130.0);
@@ -58,7 +58,7 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(580);
         cultivo.setTemporadaOptima("Verano");
         cultivos.add(cultivo);
-
+//
         cultivo = new Cultivo();
         cultivo.setNombre("Brócoli");
         cultivo.setCostoPorParcela(115.0);
@@ -66,7 +66,7 @@ public class Main {
         cultivo.setPrecioDeVentaPorParcela(510);
         cultivo.setTemporadaOptima("Otoño");
         cultivos.add(cultivo);
-
+//
         cultivo = new Cultivo();
         cultivo.setNombre("Espinaca");
         cultivo.setCostoPorParcela(85.0);
@@ -86,7 +86,7 @@ public class Main {
                 riesgos[i][j] = (i + j) / 200.0;
             }
         }
-        imprimirMatrizDeRiesgos(riesgos);
+//        imprimirMatrizDeRiesgos(riesgos);
 
         List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos,"Otoño");
         imprimirResultado(res);
