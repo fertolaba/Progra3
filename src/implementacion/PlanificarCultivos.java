@@ -19,11 +19,11 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 //            rellenarEspacios(ultimoCultivo, mejorDistribucion, campo, var2);
 //        }
 
-//        int i=var1.size()-1;
-//        while(!Objects.equals(var1.get(i).getTemporadaOptima(), var3)){
-//            i--;
-//        }
-//        mejorDistribucion=rellenarEspacios(var1.get(i), mejorDistribucion, campo,var2);
+        int i=var1.size()-1;
+        while(!Objects.equals(var1.get(i).getTemporadaOptima(), var3)){
+            i--;
+        }
+        mejorDistribucion=rellenarEspacios(var1.get(i), mejorDistribucion,campo,var2);
 
         return mejorDistribucion;
     }
@@ -198,6 +198,12 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
     private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion, double[][] campo, double[][]matrizRiesgo) {
         //System.out.println("entrando en rellenar");
+
+
+        for(CultivoSeleccionado cultivoSeleccionado: mejorDistribucion){
+            marcarComoOcupado(cultivoSeleccionado, campo);
+        }
+
         for(int x=0;x<= campo.length;x++) {
             for (int y = 0; y <= campo[0].length; y++) {
                 for (int n = 1; n <= 10; n++) {
@@ -229,6 +235,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
                                 mejorDistribucion.add(cultivoSeleccionado);
                                 marcarComoOcupado(cultivoSeleccionado, campo);
+
                             }
                             //System.out.println("no puedo ubicar");
                         }
@@ -236,6 +243,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 }
             }
         }
+
 
         return mejorDistribucion;
 
@@ -245,10 +253,15 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         for (int i=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX(); i<=cultivoSeleccionado.getEsquinaInferiorDerecha().getX(); i++){
             for(int j=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY() ; j<=cultivoSeleccionado.getEsquinaInferiorDerecha().getY(); j++){
                 campo[i][j]=1.0;
-                if (i<99 && j<99){  //Marcar como ocupado para q no se genere un rectangulo de n+m>11
-                    campo[i+1][j+1]=1.0;
-                }
+
             }
+        }
+//        if (i<99 && j<99){  //Marcar como ocupado para q no se genere un rectangulo de n+m>11
+//            campo[i+1][j+1]=1.0;
+//        }
+        if(cultivoSeleccionado.getEsquinaInferiorDerecha().getY()<99){
+            campo[cultivoSeleccionado.getEsquinaInferiorDerecha().getX()][cultivoSeleccionado.getEsquinaInferiorDerecha().getY()+1]=1.0;
+
         }
     }
 
@@ -350,4 +363,32 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                         cultivo2.getEsquinaInferiorDerecha().getY() + 1 == cultivo1.getEsquinaSuperiorIzquierda().getY();
 
         return horizontalmenteAdyacentes || verticalmenteAdyacentes;
-    }  }
+    }
+
+//    private boolean puedeUbicarPorDistribucion(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion,double[][]campo, double[][] matrizRiesgo){
+//        for(CultivoSeleccionado cultivoSeleccionado : mejorDistribucion){
+//            int izqX=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX();
+//            int izqY=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY();
+//            int derX=cultivoSeleccionado.getEsquinaInferiorDerecha().getX();
+//            int derY=cultivoSeleccionado.getEsquinaInferiorDerecha().getY();
+//
+//
+//            for(int i=izqX; i<=derX;i++){
+//                for(int j=izqY; j<=derY; j++){
+//                    campo[i][j]=1.0;
+//                }
+//            }
+//        }
+//        for(int i=0; i< campo.length;i++){
+//            for(int j=0; j<campo[0].length; j++){
+//                if(campo[i][j]==1.0){
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
+
+
+}
+
