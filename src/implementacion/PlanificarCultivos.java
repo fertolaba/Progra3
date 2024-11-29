@@ -35,7 +35,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
             List<CultivoSeleccionado> mejorDistribucion, String temporadaActual,
             double[][] matrizRiesgo) {
 
-        System.out.println("entrando a backtracking");
+//        System.out.println("entrando a backtracking");
         if (etapa >= cultivos.size()) {
             //System.out.println("Fin del backtracking. Ganancia actual: " + gananciaActual);
             if (gananciaActual > mejorGanancia) {
@@ -199,15 +199,13 @@ public class PlanificarCultivos implements PlanificadorCultivos {
     private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion, double[][] campo, double[][]matrizRiesgo) {
         //System.out.println("entrando en rellenar");
 
-
         for(CultivoSeleccionado cultivoSeleccionado: mejorDistribucion){
             marcarComoOcupado(cultivoSeleccionado, campo);
         }
-
         for(int x=0;x<= campo.length;x++) {
             for (int y = 0; y <= campo[0].length; y++) {
-                for (int n = 1; n <= 10; n++) {
-                    for (int m = 1; m <= 10; m++) {
+                for (int n = 3; n <= 10; n++) {
+                    for (int m = 3; m <= 10; m++) {
                         if (n + m <= 11) {
                             Coordenada izq = new Coordenada(x, y);
                             Coordenada der = new Coordenada(x + n - 1, y + m - 1);
