@@ -65,7 +65,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 for (int n = 1; n <= 10; n++) {
                     for (int m = 1; m <= 10; m++) {
                         if (n + m <= 11) {
-
                             Coordenada esquinaSuperiorIzquierda = new Coordenada(x, y);
                             Coordenada esquinaInferiorDerecha = new Coordenada(x + n - 1, y + m - 1);
 
