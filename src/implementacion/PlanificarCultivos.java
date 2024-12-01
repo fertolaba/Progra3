@@ -47,14 +47,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                 mejorDistribucion.clear();
                 mejorDistribucion.addAll(distribucionActual);
             }
-//            for(int x=0; x<mejorDistribucion.size(); x++){
-//                System.out.println(mejorDistribucion.get(x));
-//            }
-//            int i=cultivos.size()-1;
-//            while(!Objects.equals(cultivos.get(i).getTemporadaOptima(), temporadaActual)){
-//                i--;
-//            }
-//            mejorDistribucion=rellenarEspacios(cultivos.get(i), mejorDistribucion, campo,matrizRiesgo);
+
             return mejorDistribucion;
         }
 
@@ -207,9 +200,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                                 double potencialTotal = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo);
                                 double ganancia = potencialTotal - cultivo.getInversionRequerida();
 
-//                                CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado(
-//                                        cultivo.getNombre(), izq, der,
-//                                        cultivo.getInversionRequerida(), riesgoPromedio, ganancia);
 
                                 cultivoSeleccionado.setGananciaObtenida(ganancia);
                                 cultivoSeleccionado.setRiesgoAsociado(riesgoPromedio);
@@ -254,120 +244,7 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         }
     }
 
-    private boolean validarRestriccionUnion(CultivoSeleccionado cultivoNuevo, List<CultivoSeleccionado> distribucionActual) {
-        for (CultivoSeleccionado cultivoExistente : distribucionActual) {
-            // Verificar si los cultivos son adyacentes
-            if (sonAdyacentes(cultivoNuevo, cultivoExistente)) {
-                // Calcular el rectángulo combinado
-                int xIzquierda = Math.min(cultivoNuevo.getEsquinaSuperiorIzquierda().getX(),
-                        cultivoExistente.getEsquinaSuperiorIzquierda().getX());
-                int ySuperior = Math.min(cultivoNuevo.getEsquinaSuperiorIzquierda().getY(),
-                        cultivoExistente.getEsquinaSuperiorIzquierda().getY());
-                int xDerecha = Math.max(cultivoNuevo.getEsquinaInferiorDerecha().getX(),
-                        cultivoExistente.getEsquinaInferiorDerecha().getX());
-                int yInferior = Math.max(cultivoNuevo.getEsquinaInferiorDerecha().getY(),
-                        cultivoExistente.getEsquinaInferiorDerecha().getY());
 
-                // Calcular dimensiones del rectángulo combinado
-                int ancho = xDerecha - xIzquierda + 1;
-                int alto = yInferior - ySuperior + 1;
-
-                // Print para verificar los detalles del rectángulo combinado
-//                System.out.println("Verificando unión:");
-//                System.out.println("- Cultivo nuevo: " + cultivoNuevo);
-//                System.out.println("- Cultivo existente: " + cultivoExistente);
-//                System.out.println("- Rectángulo combinado -> Ancho: " + ancho + ", Alto: " + alto);
-
-                // Verificar restricción: ancho + alto <= 11
-                if (ancho + alto > 11) {
-//                    System.out.println("Restricción violada: ancho + alto = " + (ancho + alto));
-                    return false;
-                }
-            }
-        }
-//        System.out.println("Restricción cumplida para cultivo: " + cultivoNuevo);
-        return true;
-    }
-//    private List<CultivoSeleccionado> rellenarEspacios(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion, double[][] campo, double[][] matrizRiesgo) {
-//        for (int i = 0; i < campo.length; i++) {
-//            for (int j = 0; j < campo[0].length; j++) {
-//                if (campo[i][j] == 0.0) {
-//                    for (int n = 1; n <= 10; n++) {
-//                        for (int m = 1; m <= 10; m++) {
-//                            if (n + m <= 11) {
-//                                Coordenada esquinaSuperiorIzquierda = new Coordenada(i, j);
-//                                Coordenada esquinaInferiorDerecha = new Coordenada(i + n - 1, j + m - 1);
-//                                if (/*esquinaInferiorDerecha.getX() < campo.length &&
-//                                        esquinaInferiorDerecha.getY() < campo[0].length &&*/
-//                                        puedeUbicar(esquinaSuperiorIzquierda, esquinaInferiorDerecha, campo, mejorDistribucion)) {
-//                                    CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado(
-//                                            cultivo.getNombre(), esquinaSuperiorIzquierda, esquinaInferiorDerecha,
-//                                            cultivo.getInversionRequerida(), 0.0, 0.0);
-//
-//                                    if (validarRestriccionUnion(cultivoSeleccionado, mejorDistribucion)) {
-//                                        double riesgoPromedio = calcularRiesgoPromedio(
-//                                                esquinaSuperiorIzquierda.getX(), esquinaSuperiorIzquierda.getY(),
-//                                                esquinaInferiorDerecha.getX() + 1, esquinaInferiorDerecha.getY() + 1, matrizRiesgo);
-//                                        double potencialTotal = CalcularPotencial(
-//                                                esquinaSuperiorIzquierda.getX(), esquinaSuperiorIzquierda.getY(),
-//                                                esquinaInferiorDerecha.getX() + 1, esquinaInferiorDerecha.getY() + 1, cultivo, matrizRiesgo);
-//                                        double ganancia = potencialTotal - cultivo.getInversionRequerida();
-//
-//                                        cultivoSeleccionado.setRiesgoAsociado(riesgoPromedio);
-//                                        cultivoSeleccionado.setGananciaObtenida(ganancia);
-//
-//                                        mejorDistribucion.add(cultivoSeleccionado);
-//
-//                                        marcarComoOcupado(cultivoSeleccionado, campo);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return mejorDistribucion;
-//    }
-
-
-
-
-    private boolean sonAdyacentes(CultivoSeleccionado cultivo1, CultivoSeleccionado cultivo2) {
-        boolean horizontalmenteAdyacentes =
-                cultivo1.getEsquinaInferiorDerecha().getX() + 1 == cultivo2.getEsquinaSuperiorIzquierda().getX() ||
-                        cultivo2.getEsquinaInferiorDerecha().getX() + 1 == cultivo1.getEsquinaSuperiorIzquierda().getX();
-
-        boolean verticalmenteAdyacentes =
-                cultivo1.getEsquinaInferiorDerecha().getY() + 1 == cultivo2.getEsquinaSuperiorIzquierda().getY() ||
-                        cultivo2.getEsquinaInferiorDerecha().getY() + 1 == cultivo1.getEsquinaSuperiorIzquierda().getY();
-
-        return horizontalmenteAdyacentes || verticalmenteAdyacentes;
-    }
-
-//    private boolean puedeUbicarPorDistribucion(Cultivo cultivo, List<CultivoSeleccionado> mejorDistribucion,double[][]campo, double[][] matrizRiesgo){
-//        for(CultivoSeleccionado cultivoSeleccionado : mejorDistribucion){
-//            int izqX=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getX();
-//            int izqY=cultivoSeleccionado.getEsquinaSuperiorIzquierda().getY();
-//            int derX=cultivoSeleccionado.getEsquinaInferiorDerecha().getX();
-//            int derY=cultivoSeleccionado.getEsquinaInferiorDerecha().getY();
-//
-//
-//            for(int i=izqX; i<=derX;i++){
-//                for(int j=izqY; j<=derY; j++){
-//                    campo[i][j]=1.0;
-//                }
-//            }
-//        }
-//        for(int i=0; i< campo.length;i++){
-//            for(int j=0; j<campo[0].length; j++){
-//                if(campo[i][j]==1.0){
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-//    }
 
 
 }
