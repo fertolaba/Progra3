@@ -13,17 +13,22 @@ public class PlanificarCultivos implements PlanificadorCultivos {
         double[][] campo = new double[100][100];
 
         mejorDistribucion = backtracking(0, var1, campo, 0.0, distribucionActual, 0.0, mejorDistribucion, var3, var2);
-//
-//        if (!mejorDistribucion.isEmpty()) {
-//            Cultivo ultimoCultivo = var1.get(var1.size() - 1);
-//            rellenarEspacios(ultimoCultivo, mejorDistribucion, campo, var2);
-//        }
 
-        int i=var1.size()-1;
-        while(!Objects.equals(var1.get(i).getTemporadaOptima(), var3)){
-            i--;
+        double mayorGanancia=0;
+        Cultivo mejorCultivo=null;
+        for(int i=0; i<var1.size();i++){
+            if(var1.get(i).getTemporadaOptima().equals(var3)){
+                double potencial= CalcularPotencial(0,0, campo.length, campo[0].length, var1.get(i),var2);
+                double ganancia=potencial-var1.get(i).getInversionRequerida();
+                //System.out.println(var1.get(i).getNombre());
+                //System.out.println(ganancia);
+                if (ganancia > mayorGanancia){
+                    mayorGanancia=ganancia;
+                    mejorCultivo=var1.get(i);
+                }
+            }
         }
-        mejorDistribucion=rellenarEspacios(var1.get(i), mejorDistribucion,campo,var2);
+        mejorDistribucion=rellenarEspacios(mejorCultivo, mejorDistribucion,campo,var2);
 
         return mejorDistribucion;
     }
@@ -80,9 +85,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
                                     double potencialTotal = CalcularPotencial(x, y, x + n, y + m, cultivo, matrizRiesgo);
                                     double ganancia = potencialTotal - cultivo.getInversionRequerida();
 
-//                                    CultivoSeleccionado cultivoSeleccionado = new CultivoSeleccionado(
-//                                            cultivo.getNombre(), esquinaSuperiorIzquierda, esquinaInferiorDerecha,
-//                                            cultivo.getInversionRequerida(), riesgoPromedio, ganancia);
 
                                     cultivoSeleccionado.setGananciaObtenida(ganancia);
                                     cultivoSeleccionado.setRiesgoAsociado(riesgoPromedio);
@@ -121,23 +123,6 @@ public class PlanificarCultivos implements PlanificadorCultivos {
             return false;
         }
 
-//        for (CultivoSeleccionado cultivo : distribucionActual) {
-//            Coordenada cultivoEsquinaIzq = cultivo.getEsquinaSuperiorIzquierda();
-//            Coordenada cultivoEsquinaDer = cultivo.getEsquinaInferiorDerecha();
-//
-//            if(esquinaSuperiorIzquierda.getX() <= cultivoEsquinaDer.getX() && esquinaSuperiorIzquierda.getY()<=cultivoEsquinaDer.getY()){
-//                return false;
-//            }
-//
-//            if(esquinaInferiorDerecha.getX()>=cultivoEsquinaIzq.getX() && esquinaInferiorDerecha.getY()>= cultivoEsquinaIzq.getY()){
-//                return false;
-//            }
-//
-//            if (esquinaSuperiorIzquierda.getX() <= cultivoEsquinaDer.getX() && esquinaInferiorDerecha.getX() >= cultivoEsquinaIzq.getX() &&
-//                    esquinaSuperiorIzquierda.getY() <= cultivoEsquinaDer.getY() && esquinaInferiorDerecha.getY() >= cultivoEsquinaIzq.getY()) {
-//                return false;
-//            }
-//        }
 
         for (int i = esquinaSuperiorIzquierda.getX(); i <= esquinaInferiorDerecha.getX(); i++) {
             for (int j = esquinaSuperiorIzquierda.getY(); j <= esquinaInferiorDerecha.getY(); j++) {
@@ -253,10 +238,8 @@ public class PlanificarCultivos implements PlanificadorCultivos {
 
             }
         }
-//        if (i<99 && j<99){  //Marcar como ocupado para q no se genere un rectangulo de n+m>11
-//            campo[i+1][j+1]=1.0;
-//        }
-        if(cultivoSeleccionado.getEsquinaInferiorDerecha().getY()<99){
+
+        if(cultivoSeleccionado.getEsquinaInferiorDerecha().getY()<campo.length-1){
             campo[cultivoSeleccionado.getEsquinaInferiorDerecha().getX()][cultivoSeleccionado.getEsquinaInferiorDerecha().getY()+1]=1.0;
 
         }

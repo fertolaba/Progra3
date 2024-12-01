@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         PlanificarCultivos planificador = new PlanificarCultivos();
 
         List<Cultivo> cultivos = new ArrayList<>();
@@ -89,12 +90,18 @@ public class Main {
         imprimirMatrizDeRiesgos(riesgos);
 
         List<CultivoSeleccionado> res = planificador.obtenerPlanificacion(cultivos, riesgos,"Otoño");
+        long endTime = System.currentTimeMillis();
+        System.out.println("Tiempo de ejecución: " + (endTime - startTime) + " ms");
         imprimirResultado(res);
+
+
+
+
     }
 
     private static void imprimirMatrizDeRiesgos(double[][] riesgos) {
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
+        for (int i = 0; i < riesgos.length; i++) {
+            for (int j = 0; j < riesgos[0].length; j++) {
                 System.out.print(riesgos[i][j] + "\t");
             }
             System.out.println();
@@ -107,4 +114,6 @@ public class Main {
             System.out.println(cultivo);
         }
     }
+
+
 }
